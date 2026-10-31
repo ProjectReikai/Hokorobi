@@ -39,7 +39,7 @@ Every pitfall abstracts a real historical research lesson; all apply to all cand
 ## 7. Sunk-cost loop
 
 - **Symptom**: repeated investment in one candidate while evidence stays at a low R level.
-- **Correction**: at every stage gate, check: is there new evidence raising the R level versus the previous round? No → downgrade or exclude, and move to the next candidate. Excluded candidates stay in state and report §6; a trigger (e.g. new public evidence) can bring them back.
+- **Correction**: at every stage gate, check: is there new evidence raising the R level versus the previous round? No → downgrade or defer, and move to the next candidate. Reserve `exclude` for clear inapplicability. Deferred/excluded candidates stay in state and report §6; a trigger (e.g. new public evidence) can bring them back.
 
 ## 8. False evidence from online fetch failures
 

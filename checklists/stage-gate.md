@@ -1,13 +1,14 @@
 # Stage Gate — Stage Gate Checklist
 
-For every candidate, **after each completed stage**, run the corresponding gate. Output one of three: `pass` (advance to the next stage) / `downgrade` (cap the R level, retain) / `exclude` (exclude, record in report §6).
+For every candidate, **after each completed stage**, run the corresponding gate. Output one of four: `pass` (advance to the next stage) / `downgrade` (cap the R level, retain) / `defer` (retain the candidate and current R level; record missing material and a re-entry trigger; no further investment this run) / `exclude` (clearly inapplicable or demonstrably blocked; record in report §6).
 
 General rules:
 
 - Gate decisions are based on **recorded evidence**, not expectations. Work you plan to do is not evidence.
-- `downgrade` / `exclude` must include a one-line reason, and you must check pitfalls.md §7: this is an evidence problem, not an effort problem.
+- `downgrade` / `defer` / `exclude` must include a one-line reason, and you must check pitfalls.md §7: this is an evidence problem, not an effort problem.
 - An `exclude`d candidate's R level is **frozen at the exclusion point** (see "R-level semantics" in SKILL.md); later analysis does not change its R level.
-- If a candidate reaches the same gate a second time at the same R level with no new evidence → automatic `exclude` (prevents sunk-cost loops); note in state "conditions that could re-include it".
+- If a candidate reaches the same gate a second time at the same R level with no new evidence → automatic `defer`, not `exclude`; record what evidence would justify re-entry. Reserve `exclude` for clear inapplicability (component absent, patched, hard-blocked, out of scope).
+- Unavailable OEM source or binary is a reason to `defer`, not to `exclude`, when the candidate is otherwise viable.
 
 ## 00 Source Gate (run first; determines analysis depth)
 
@@ -33,7 +34,7 @@ Record format: `- gate 00: source = upstream+diff, GKI branch android15-6.6, tar
 - [ ] Retrieval followed the three-segment order (commit stream → CVE channel → semantic targeting), not broad websearch or model memory
 - [ ] Every candidate's disclosure date verified inside the window; commit-channel candidates marked consequence: TBD and smell
 - [ ] **Enumeration completeness**: how many ASB issues were fetched, whether lore/cvelistV5 enumeration covered back to the window start, whether unreachable gaps are recorded in Blockers — uncovered parts must not be written as "complete" in state, only "partially complete (gap: …)"
-- Failing → stay in `needs-verification`, do not enter Patch Verification (except commit-only candidates).
+- Failing → `defer` as `needs-verification`, do not enter Patch Verification (except commit-only candidates).
 
 ## 02 Patch Verification gate → determines R1
 
@@ -44,7 +45,7 @@ Record format: `- gate 00: source = upstream+diff, GKI branch android15-6.6, tar
 - [ ] With only an approximate kernel version, no claim that "the target kernel is confirmed affected"
 - `patched` (either path, preconditions complete) → **exclude**: record in §6 with the exclusion path.
 - `affected` → pass, grant R1.
-- `uncertain` → downgrade, cap the R level at R0, list the missing material in Blockers.
+- `uncertain` → `defer` (missing material may arrive later) or `downgrade` (evidence conclusively insufficient), cap the R level at R0, list the missing material and re-entry trigger in Blockers.
 
 ## 03 Reachability gate → determines R2
 
@@ -60,7 +61,7 @@ Record format: `- gate 00: source = upstream+diff, GKI branch android15-6.6, tar
 
 - [ ] Root cause class + statement of the broken invariant
 - [ ] First-party evidence support (commit/mailing list)
-- Failing → downgrade, cap at R2. Logic/permission types must not use the wrong framework (pitfalls §9).
+- Failing → `defer` when first-party evidence is unobtainable for now, `downgrade` when it is conclusively insufficient; cap at R2. Logic/permission types must not use the wrong framework (pitfalls §9).
 
 ## 05 Race & Lifetime gate (does not change the R level)
 
@@ -82,12 +83,12 @@ Record format: `- gate 00: source = upstream+diff, GKI branch android15-6.6, tar
 
 - [ ] All six scoring.md dimensions have reasoning + references, or an explicit 0 + Blocker
 - [ ] Priority and R-level consistency check passed
-- [ ] P3 candidates have exclusion reasons
+- [ ] P3 candidates have defer/exclusion reasons
 
 ## 08 Review & Report gate (global)
 
 - [ ] Every detailed entry contains Blockers and "unverified key conditions" (hard rule 6)
-- [ ] Failed/downgraded candidates all have attribution (pitfalls §6)
+- [ ] Failed/downgraded/deferred candidates all have attribution (pitfalls §6)
 - [ ] Ranking follows P0–P3, not CVSS
 - [ ] Sources include original links and access dates
 - [ ] state/ has been synchronized to the report's final conclusions; a copy of the report is archived outside the run
@@ -97,5 +98,6 @@ Record format: `- gate 00: source = upstream+diff, GKI branch android15-6.6, tar
 ```
 - gate 02: affected → R1 (evidence: <commit/file location>, 2026-10-30)
 - gate 03: reachable → R2 (SELinux policy reference)
+- gate 03: deferred — vendor source unavailable; re-entry when the OEM publishes the kernel tree
 - gate 06: R4 denied — public repo reproduction failed checklist item 3 (crash screenshot only, no root validation)
 ```

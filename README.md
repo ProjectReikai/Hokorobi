@@ -92,7 +92,7 @@ Each run maintains:
 - `hokorobi-runs/<run>/state/candidates.md` — candidate status, evidence, blockers, and current assessment.
 - `hokorobi-runs/<run>/state/progress.md` — completed stages, pending work, and resume instructions.
 
-An existing run is resumed instead of repeating completed verification work. Final reports are preserved alongside the research state.
+An existing run is resumed instead of repeating completed verification work. Final reports are preserved alongside the research state. Candidates that cannot be verified yet are deferred with an explicit re-entry trigger, not silently dropped.
 
 Resuming does not freeze conclusions. Evidence that may have expired — a newer upstream fix, a changed device build, or newly published reproduction — can and should be re-verified. "Do not repeat completed work" never means "never update a conclusion".
 

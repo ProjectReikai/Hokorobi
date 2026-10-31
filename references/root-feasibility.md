@@ -53,7 +53,20 @@ This is typical R4 evidence material — no "bump one level" rule is needed; it 
 - **Reproduction quality affects Confidence and Blockers, not the R level**: an imperfect/unstable implementation still grants R4 as usual, but Confidence drops to medium/low and a Blocker records "reproduction reliability not independently verified". The R level measures the evidence tier; Confidence measures conclusion robustness — expressing them separately carries the most information.
 - **No automatic +1 rule of any kind**: a repo existing ≠ verification passed. A repo with only crash screenshots, no proof of privilege escalation, or an unclear environment (userdebug/permissive) does not support R4; downgrade it to a lead. Reaching R5 still requires a trustworthy reproduction on a comparable device (hard rule 8).
 
-R levels reflect the **highest verified tier**. Any skipped intermediate tier must be filled in (e.g. R4 is impossible while R2 is unconfirmed).
+R levels reflect the **highest verified tier at the stated scope**. R1–R3 describe the analyzed target (device/image under study). R4–R5 may be established on a comparable device/build and describe public evidence for the direction; they do not by themselves establish the user's target patch status or reachability. R6 requires target-device validation. Never fill a target-specific gap with public evidence.
+
+### Independent evidence axes (mandatory)
+
+The R level is a display summary. Record these four axes independently for every candidate; never derive one axis from another or from the R level:
+
+| Axis | Values |
+|---|---|
+| `patch_status` | affected / patched / uncertain / unverified |
+| `reachability` | reachable / conditional / blocked / unverified |
+| `public_lpe_evidence` | none / lead / R4-argument / R5-cross-device / R5-target / R5-conditional |
+| `target_validation` | none / L4-debug / cross-device / target-device |
+
+`R5-cross-device` can coexist with `patch_status: unverified` and `reachability: unverified` on the target: it raises research priority but does not prove the target satisfies R1/R2. Only `R5-target` and `R6` imply target validation.
 
 ### Promotion/demotion rules
 
@@ -88,7 +101,10 @@ Mitigation applicability (linking to the corresponding scoring dimension): KASLR
 ```
 ### CVE-YYYY-NNNNN privilege escalation assessment
 - potential impact: <info-leak / DoS / cred-tamper / selinux-escape / unknown>
-- public LPE evidence: <checklist result for each material>
+- patch status: <affected / patched / uncertain / unverified>
+- reachability: <reachable / conditional / blocked / unverified>
+- public LPE evidence: <none / lead / R4-argument / R5-cross-device / R5-target / R5-conditional> — <checklist result per material>
+- target validation: <none / L4-debug / cross-device / target-device>
 - android applicability: <the Android boundary analysis above>
 - existing limitations: <limitations acknowledged by the authors of public material>
 - unverified assumptions: <assumptions the material relies on but has not verified>

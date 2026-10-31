@@ -81,6 +81,13 @@
 - Existing limitations:
 - Unverified assumptions:
 
+#### Evidence Axes
+- Patch status (target): <!-- affected / patched / uncertain / unverified -->
+- Reachability (target): <!-- reachable / conditional / blocked / unverified -->
+- Public LPE evidence: <!-- none / lead / R4-argument / R5-cross-device / R5-target / R5-conditional -->
+- Target validation: <!-- none / L4-debug / cross-device / target-device -->
+<!-- The R level is a display summary; these axes are independent and must not be derived from it. -->
+
 #### Research Decision
 - Evidence level: R<n> <!-- one line of grant reasoning per tier -->
 - Research priority: P<n>
@@ -97,11 +104,11 @@
 
 <!-- Compare candidates on Root relevance, evidence quality, target applicability, and validation cost. Tables allowed. -->
 
-## 6. Excluded Candidates
+## 6. Excluded and Deferred Candidates
 
-| CVE | Exclusion reason | Stage | Re-entry trigger |
-|-----|------------------|-------|------------------|
-| | <!-- patched / unreachable / evidence unavailable --> | gate 0x | <!-- what new evidence would bring it back --> |
+| CVE | Status | Reason | Stage | Re-entry trigger |
+|-----|--------|--------|-------|------------------|
+| | excluded/deferred | <!-- patched / unreachable / evidence unavailable --> | gate 0x | <!-- what new evidence would bring it back --> |
 
 ## 7. Research Recommendations
 

@@ -32,7 +32,7 @@ Output: a Markdown research report. Hokorobi does not write escalation payloads,
 4. **Never treat WARN / Oops / KASAN reports as Root success.** Memory corruption evidence ≠ privilege escalation.
 5. **Never treat a public device-specific rooting project as a generic Android Root.** Verify its target device, kernel image, and validation method.
 6. **Every report must record why expected outcomes were not achieved and which key conditions remain unverified** (Blockers are mandatory).
-7. **Downgrade or exclude candidates with insufficient evidence or unmet conditions promptly**; do not keep reinvesting.
+7. **Downgrade, defer, or exclude candidates with insufficient evidence or unmet conditions promptly**; do not keep reinvesting in the same run.
 8. **No automatic R-level jumps.** R3 never auto-promotes to R4 because it "looks exploitable"; R5 never auto-promotes to R6 because "a similar device worked". Only new credible evidence promotes a level.
 9. **Search, don't recall.** Every candidate, piece of evidence, and source must come from a page actually fetched in this run, with a link attached. Never introduce candidates from model memory (well-known historical CVEs are not a source).
 
@@ -46,12 +46,12 @@ Discovery → Patch Verification → Reachability → Root Cause Analysis
 
 Before a candidate enters Patch Verification and Race & Lifetime Analysis, run the **Source Gate (gate 00)** in [checklists/stage-gate.md](checklists/stage-gate.md): determine available source/binary material and the permitted analysis depth (L0–L4 in references/race-analysis.md). L1 (upstream source + fix diff) is the default mode; L2/L3 are enhanced modes. Never require the user to provide a complete kernel up front.
 
-At the end of each stage, run the corresponding gate: pass, downgrade, or exclude. Downgraded/excluded candidates are recorded in state and explained in report §6; never re-analyze them.
+At the end of each stage, run the corresponding gate: pass, downgrade, defer, or exclude. Downgraded, deferred, and excluded candidates are recorded in state and explained in report §6; do not re-analyze them in the same run. A deferred candidate re-enters when its recorded trigger appears.
 
 ## Before you start: state recovery and target resolution
 
 1. Look for `hokorobi-runs/*/state/` in the working directory.
-2. If found: load `state/candidates.md` and `state/progress.md`, resume from the interruption point, and **never repeat completed verification**.
+2. If found: load `state/candidates.md` and `state/progress.md`, resume from the interruption point, and **do not repeat verification whose inputs have not changed**. Re-verify when evidence may be stale — a newer upstream fix, a changed device build, or newly published reproduction. "Do not repeat" never means "never update a conclusion".
 3. If not found: create `hokorobi-runs/<device>-<date>/` and initialize state files.
 4. **Resolve the target** (two paths):
    - The user provides a kernel image (boot.img / vendor_boot.img / Image / vmlinux): follow references/image-intake.md — **do not ask the user about kernel internals; the image speaks for itself**. Produce kernel version, GKI generation/branch, build commit, real config (IKCONFIG), snapshot anchor; write to state.
@@ -63,6 +63,7 @@ At the end of each stage, run the corresponding gate: pass, downgrade, or exclud
 
 - A candidate excluded by a gate has its R level **frozen at the exclusion point** (e.g., a candidate blocked at gate 03 is recorded as R1 even if later root-cause analysis would reach R3; record that in notes only).
 - A downgraded candidate is capped at its current value until new evidence lifts it.
+- A deferred candidate keeps its current R level but is marked `deferred`; it is not invested in further this run and re-enters when its recorded trigger appears.
 
 ## Execution efficiency (mandatory)
 
@@ -124,7 +125,7 @@ Load only the file for the current stage, never all at once:
 | R5 | Public escalation reproduction on a comparable device | Applicability can be studied |
 | R6 | Independently verified Root result on the target device | Target achieved |
 
-Full criteria and promotion/demotion rules: references/root-feasibility.md. An R level reflects the **highest verified evidence tier**, never speculation.
+Full criteria and promotion/demotion rules: references/root-feasibility.md. An R level reflects the **highest verified evidence tier**, never speculation. It is a display summary, not a state machine: record `patch_status`, `reachability`, `public_lpe_evidence`, and `target_validation` independently for every candidate, and never derive one axis from another. In particular, `R5-cross-device` can coexist with unverified target patch status and reachability.
 
 ## Output
 
