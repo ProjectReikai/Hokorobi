@@ -1,0 +1,23 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local research runs (large, device-specific; may contain personal paths or fetched artifacts)
+test-run-*/
+hokorobi-runs/
+state/
+*.img
+*.bin
+Image
+vmlinux
+*.elf
+
+# Logs and temporary files
+*.log
+*.tmp
